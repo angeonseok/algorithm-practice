@@ -1,4 +1,3 @@
-#크루스칼에 주석 다 달아둠. prim방식으로 푸는 것만 적을 예정
 import sys
 import heapq
 from collections import deque

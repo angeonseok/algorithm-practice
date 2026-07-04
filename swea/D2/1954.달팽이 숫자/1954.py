@@ -3,7 +3,7 @@ input = sys.stdin.readline
 
 T = int(input())
 
-#하, 우, 상, 좌 순으로 델타 정렬
+# 우, 하, 좌, 상
 dx = [0, 1, 0, -1] 
 dy = [1, 0, -1, 0]
 

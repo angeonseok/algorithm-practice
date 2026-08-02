@@ -21,11 +21,17 @@ THE_HEADLINE_IS_THE_TEXT_INDICATING_THE_NATURE_OF_THE_ARTICLE_BELOW_IT.
 ## 풀이 정리
 
 ### 핵심 아이디어
+소문자를 전부 대문자로 바꿔서 출력. py는 upper() 한 방이고, cpp는 isalpha로 걸러서 toupper 돌렸다.
 
 ### 시간복잡도
+O(L). 문자열 길이만큼 한 번 훑는다.
 
 ### 구현 포인트
+- 문장에 _랑 . 이 섞여 있어서 cpp는 알파벳인지 보고 바꿈. py upper()는 알아서 냅둔다
+- cin >> s는 공백에서 끊기는데 입력이 _로 이어져 있어서 통과한 거다
+- 길이 80바이트라 뭘 해도 여유
 
 ### 실수했던 점
 
 ### 풀이 언어
+Python, C++

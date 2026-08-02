@@ -12,11 +12,19 @@ n개의 정점을 갖는 이진 트리의 정점에 1부터 n까지의 번호가
 ## 풀이 정리
 
 ### 핵심 아이디어
+포스트오더 맨 끝이 루트고, 그 루트를 인오더에서 찾으면 왼쪽 서브트리 크기가 바로 나온다. 그 크기로 두 배열 구간을 같이 쪼개면서 루트를 찍는 순서가 곧 프리오더.
 
 ### 시간복잡도
+O(N^2). 인오더 루트를 while로 선형 탐색해서 한쪽으로 쭉 쏠린 트리면 여기까지 감. 값 위치를 딕셔너리에 미리 박아두면 O(N)으로 내려간다.
 
 ### 구현 포인트
+- 인자를 post_start, post_end, in_start, in_end 네 개로 잡아야 한다. 처음에 3개로 했다가 망함
+- left_size = mid - in_start 하나로 인오더랑 포스트오더 구간을 같이 자른다
+- 왼쪽은 (post_start, post_start+left_size-1, in_start, mid-1), 오른쪽은 (post_start+left_size, post_end-1, mid+1, in_end). 인덱스 조심
+- in_start > in_end면 구간이 빈 거라 바로 return. 이거 없으면 계속 내려간다
+- n이 10만이라 setrecursionlimit 100001로 올려둠
 
 ### 실수했던 점
 
 ### 풀이 언어
+Python

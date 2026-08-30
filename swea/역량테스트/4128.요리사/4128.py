@@ -3,31 +3,33 @@ from itertools import combinations
 T = int(input())
 for tc in range(1, T+1):
     n = int(input())
-    synergy = [list(map(int, input().split())) for _ in range(n)]
+    table = [list(map(int, input().split())) for _ in range(n)]
 
+    #combinations 사용하기 위한 밑작업
     food = list(range(n))
-    ans = 10**18
 
-    for f1 in combinations(food, n//2):
-        f2 = []
-        for i in food:
-            if i not in f1:
-                f2.append(i)
+    ans = float('inf')
+    for t1 in combinations(food, n//2):
 
-        f1_synergy = 0
+        #식재료 반반 나눠서 2그룹으로
+        t2 = [i for i in food if i not in t1]
+
+        #식재료의 모든 시너지 값 합치기
+        sy1 = 0
         for i in range(n//2):
-            for j in range(i+1, n//2):
-                a = f1[i]
-                b = f1[j]
-                f1_synergy += synergy[a][b] + synergy[b][a]
-        
-        f2_synergy = 0
+            for j in range(i + 1, n//2):
+                a, b = t1[i], t1[j]
+                sy1 += table[a][b]
+                sy1 += table[b][a]
+
+        #여기도
+        sy2 = 0
         for i in range(n//2):
-            for j in range(i+1, n//2):
-                a = f2[i]
-                b = f2[j]
-                f2_synergy += synergy[a][b] + synergy[b][a]
+            for j in range(i + 1, n//2):
+                a, b = t2[i], t2[j]
+                sy2 += table[a][b]
+                sy2 += table[b][a]
 
-        ans = min(ans, abs(f1_synergy - f2_synergy))
+        ans = min(ans, abs(sy1 - sy2))
 
-    print(f"#{tc} {ans}")
+    print(f'#{tc} {ans}')

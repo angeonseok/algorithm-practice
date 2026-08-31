@@ -1,43 +1,53 @@
-dirs = ((1, 1), (1, -1), (-1, -1), (-1, 1))
+#좌하, 우하, 우상, 좌상
+dirs = ((1, -1), (1, 1), (-1, 1), (-1, -1))
 
-def dfs(si, sj, ci, cj, cnt, d):
+
+#시작좌표, 현재좌표, 방향 정보, 쳐먹은 개수
+def sol(si, sj, ci, cj, d, cnt):
     global ans
 
-    #2. 방향을 제한하면서 탐색(현재방향/다음방향)
-    for nd in (d, d+1):
+    #돌아서 시작지점으로 온 경우 값 갱신
+    if d != 0 and (si, sj) == (ci, cj):
+        ans = max(ans, cnt)
+        return
 
-        #최대 횟수는 3회
+    #현재 방향, 다음 방향만 따진다.
+    for nd in (d, d + 1):
+
+        #d가 가질 수 있는 값은 3이 최대
         if nd > 3:
             continue
 
         ni, nj = ci + dirs[nd][0], cj + dirs[nd][1]
-
-        #3. 시작 지점으로 돌아옴 + 최소 개수 채우면 > 정답 갱신
         if 0 <= ni < n and 0 <= nj < n:
-            if ni == si and nj == sj and cnt >= 4:
-                ans = max(ans, cnt)
-                return
-            
-            #4. # 디저트 안 겹치면 계속 가
-            elif not visited[arr[ni][nj]]:
-                visited[arr[ni][nj]] = True
-                dfs(si, sj, ni, nj, cnt+1, nd)
-                visited[arr[ni][nj]] = False
 
-        
+            #시작점을 visited 처리해서 그냥 돌리면 못감.
+            if (si, sj) == (ni, nj):
+
+                #사각형을 그리면서 도착하려면 nd = 3이여야하네.
+                if nd == 3:
+                    sol(si, sj, ni, nj, nd, cnt)
+
+            #시작점 가는거 아니면 계속 진행
+            elif cafe[ni][nj] not in visited:
+                visited.add(cafe[ni][nj])
+                sol(si, sj, ni, nj, nd, cnt + 1)
+                visited.remove(cafe[ni][nj])
+
+
 T = int(input())
 for tc in range(1, T+1):
     n = int(input())
-    arr = [list(map(int, input().split())) for _ in range(n)]
+    cafe = [list(map(int, input().split())) for _ in range(n)]
 
-    visited = [False] * 101
+    visited = set()
+
     ans = -1
+    #탐색 범위를 좁혀봤다. 종이로 그려봐라
+    for i in range(n - 2):
+        for j in range(1, n - 1):
+            visited.add(cafe[i][j])
+            sol(i, j, i, j, 0, 1)
+            visited.remove(cafe[i][j])
 
-    #1. 사각형 생성 가능 지점만 조사하자
-    for i in range(n-2):
-        for j in range(1, n-1):
-            visited[arr[i][j]] = True
-            dfs(i, j, i, j, 1, 0)
-            visited[arr[i][j]] = False
-
-    print(f"#{tc} {ans}")
+    print(f'#{tc} {ans}')

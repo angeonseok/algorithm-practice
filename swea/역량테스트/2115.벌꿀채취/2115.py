@@ -1,16 +1,16 @@
-#조건을 만족하는 부분집합을 찾고 최대 이익 계산
-def profit(idx, total, cur_sum, arr):
+#최대 점수 계산
+def cal_best(idx, total, value, seg):
     global best
 
     if total > c:
-        return
+        return 
 
     if idx == m:
-        best = max(best, cur_sum)
+        best = max(best, value)
         return
 
-    profit(idx + 1, total, cur_sum, arr)
-    profit(idx + 1, total + arr[idx], cur_sum + arr[idx] ** 2, arr)
+    cal_best(idx + 1, total, value, seg)
+    cal_best(idx + 1, total + seg[idx], value + seg[idx] ** 2, seg)
 
 
 T = int(input())
@@ -18,31 +18,23 @@ for tc in range(1, T+1):
     n, m, c = map(int, input().split())
     arr = [list(map(int, input().split())) for _ in range(n)]
 
-    #각 좌표별 최대 이익을 저장해둘 예정
-    arr_profit = [[0] * (n - m + 1)  for _ in range(n)]
-    
-    #좌표 기준으로 구간 찾고, 그 구간 내 최대 이익 계산
+    #칸별 최대점수 미리 계산
+    profit = [[0] * (n - m + 1) for _ in range(n)]
     for i in range(n):
         for j in range(n - m + 1):
             best = 0
-            seg = arr[i][j:j+m]
-            profit(0, 0, 0, seg)
-            arr_profit[i][j] = best
-    
+            cal_best(0, 0, 0, arr[i][j : j + m])
+            profit[i][j] = best
+
+    #선택 구역 겹치는지 체크
     ans = 0
-
-    #첫번째 노동자
-    for i1 in range(n):
-        for j1 in range(n - m + 1):
-
-            #두번째 노동자
-            for i2 in range(n):
-                for j2 in range(n - m + 1):
-
-                    #서로 같은 행에서 구간 겹치면 조건 위배
-                    if i1 == i2 and abs(j1 - j2) < m:
+    for r1 in range(n):
+        for c1 in range(n - m  + 1):
+            for r2 in range(r1, n):
+                for c2 in range(n - m + 1):
+                    if r1 == r2 and abs(c1 -c2) < m:
                         continue
 
-                    ans = max(ans, arr_profit[i1][j1] + arr_profit[i2][j2])
-    
-    print(f"#{tc} {ans}")
+                    ans = max(ans, profit[r1][c1] + profit[r2][c2])
+
+    print(f'#{tc} {ans}')

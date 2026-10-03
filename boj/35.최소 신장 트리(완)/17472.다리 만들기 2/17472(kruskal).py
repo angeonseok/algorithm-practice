@@ -1,5 +1,4 @@
 import sys
-import heapq
 from collections import deque
 input = sys.stdin.readline
 
@@ -58,46 +57,38 @@ def bridge(arr):
                             if cnt >= 2:
                                 temp.append((cnt, cur_i, c))
                             break                    
-    graph = e_to_g(temp)
-    return graph
+    #크루스칼은 간선 리스트 그대로 사용 (중복은 union-find가 걸러줌)
+    return temp
 
 
-#중복제거 + 그래프 변환
-def e_to_g(edges):
-    e_dict = {}
-    for w, a, b in edges:
-        a, b = min(a, b), max(a, b)
-        if (a, b) not in e_dict or w < e_dict[(a, b)]:
-            e_dict[(a, b)] = w
-    
-    graph = [[] for _ in range(i_cnt + 2)]
-    for (a, b), w in e_dict.items():
-        graph[a].append((w, b))
-        graph[b].append((w, a))
-    
-    return graph
+#union-find
+def find(parent, x):
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
+    return x
+
+def union(parent, a, b):
+    ra, rb = find(parent, a), find(parent, b)
+    if ra == rb:
+        return False
+    parent[rb] = ra
+    return True
 
 
-
-#시작정점이 2
-def prim(v, graph, start = 2):
-    visited = [False] * len(graph)
-    pq = [(0, start)]
+#섬 번호가 2부터 시작하므로 parent 크기 v + 2
+def kruskal(v, edges):
+    parent = list(range(v + 2))
+    edges.sort()
     total = 0
-    cnt = 0
+    cnt = 1     #정점 1개에서 시작, 간선 하나 붙을 때마다 +1
 
-    while pq and cnt < v:
-        w, u = heapq.heappop(pq)
-
-        if visited[u]:
-            continue
-        visited[u] = True
-        total += w
-        cnt += 1
-
-        for nw, nu in graph[u]:
-            if not visited[nu]:
-                heapq.heappush(pq,(nw,nu))
+    for w, a, b in edges:
+        if cnt == v:
+            break
+        if union(parent, a, b):
+            total += w
+            cnt += 1
 
     return total, cnt
 
@@ -106,10 +97,10 @@ n, m = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(n)]
 
 arr, i_cnt = island(arr)
-graph = bridge(arr)
-total, cnt = prim(i_cnt, graph)
+edges = bridge(arr)
+total, cnt = kruskal(i_cnt, edges)
 
-#prim은 cnt를 연결된 정점 수를 보내준다
+#kruskal도 cnt를 연결된 정점 수로 보내준다
 if cnt != i_cnt:
     print(-1)
 else:
